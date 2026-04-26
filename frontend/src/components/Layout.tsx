@@ -1,41 +1,62 @@
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, NavLink } from 'react-router-dom'
 import {
-  Brain, TrendingUp, CheckCircle, Target, BookOpen, ChevronRight
+  Brain, TrendingUp, CheckCircle, Target, BookOpen, ChevronRight,
+  Cpu, Terminal, Server
 } from 'lucide-react'
 import clsx from 'clsx'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const navItems = [
-  {
-    to: '/',
-    label: 'Dashboard',
-    icon: Brain,
-    description: 'Overview & exam setup',
-  },
-  {
-    to: '/generator',
-    label: 'Generator',
-    icon: BookOpen,
-    description: 'Flashcards · Cloze · Concept Maps',
-  },
-  {
-    to: '/analyser',
-    label: 'Analyser',
-    icon: TrendingUp,
-    description: 'Trends · Traps · Distractors',
-  },
-  {
-    to: '/validator',
-    label: 'Validator',
-    icon: CheckCircle,
-    description: 'ROTI · Source Evolution',
-  },
-  {
-    to: '/eliminator',
-    label: 'Eliminator',
-    icon: Target,
-    description: 'Heuristic Guessing Engine',
-  },
+  { to: '/',          label: 'Dashboard', icon: Brain,        description: 'Overview & exam setup' },
+  { to: '/generator', label: 'Generator', icon: BookOpen,     description: 'Flashcards · Cloze · Concept Maps' },
+  { to: '/analyser',  label: 'Analyser',  icon: TrendingUp,   description: 'Trends · Traps · Distractors' },
+  { to: '/validator', label: 'Validator', icon: CheckCircle,  description: 'ROTI · Source Evolution' },
+  { to: '/eliminator',label: 'Eliminator',icon: Target,       description: 'Heuristic Guessing Engine' },
 ]
+
+interface ProviderInfo {
+  provider: string
+  model: string
+  label: string
+}
+
+const providerIcon = {
+  anthropic: Cpu,
+  'claude-cli': Terminal,
+  ollama: Server,
+} as const
+
+const providerColor = {
+  anthropic: 'text-brand-400',
+  'claude-cli': 'text-orange-400',
+  ollama: 'text-emerald-400',
+} as const
+
+function ProviderBadge() {
+  const [info, setInfo] = useState<ProviderInfo | null>(null)
+
+  useEffect(() => {
+    axios.get('/api/provider')
+      .then(r => setInfo(r.data))
+      .catch(() => setInfo({ provider: 'unknown', model: '', label: 'AI Engine' }))
+  }, [])
+
+  if (!info) return null
+
+  const Icon = providerIcon[info.provider as keyof typeof providerIcon] ?? Cpu
+  const color = providerColor[info.provider as keyof typeof providerColor] ?? 'text-gray-400'
+
+  return (
+    <div className="p-4 border-t border-gray-800">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon size={13} className={color} />
+        <span className={clsx('text-xs font-medium', color)}>{info.label}</span>
+      </div>
+      <div className="text-xs text-gray-600 truncate">{info.model}</div>
+    </div>
+  )
+}
 
 export default function Layout() {
   return (
@@ -87,12 +108,8 @@ export default function Layout() {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-800">
-          <div className="text-xs text-gray-600 text-center">
-            Powered by Claude AI
-          </div>
-        </div>
+        {/* Provider badge */}
+        <ProviderBadge />
       </aside>
 
       {/* Main content */}

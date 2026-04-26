@@ -2,7 +2,7 @@
 from typing import Any
 from sqlalchemy.orm import Session
 from models import Question, TopicWeightage, DistractorRecord
-from services.claude_client import ask_claude_json
+from services.llm_client import ask_llm_json as ask_claude_json
 
 
 SYSTEM_TRAP = """You are an expert analyst of competitive exam question patterns, specializing in UPSC, NEET, and JEE.

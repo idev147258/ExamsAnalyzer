@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 from routers import generator, analyser, validator, eliminator, exams
+from services.llm_client import get_provider_info
 
 # Create all DB tables
 Base.metadata.create_all(bind=engine)
@@ -46,3 +47,9 @@ async def root():
 @app.get("/health", tags=["Health"])
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/provider", tags=["Health"])
+async def provider_info():
+    """Returns the currently configured LLM provider and model."""
+    return get_provider_info()

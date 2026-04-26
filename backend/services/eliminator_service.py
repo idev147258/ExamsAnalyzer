@@ -2,7 +2,7 @@
 from typing import Any
 from sqlalchemy.orm import Session
 from models import EliminationHeuristic
-from services.claude_client import ask_claude_json
+from services.llm_client import ask_llm_json as ask_claude_json
 
 
 SYSTEM_ELIMINATOR = """You are an elite exam strategist who teaches students how to eliminate wrong options

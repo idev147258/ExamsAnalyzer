@@ -1,6 +1,6 @@
-"""Generator (Knowledge Engine) — Flashcards, Cloze, Concept Maps via Claude."""
+"""Generator (Knowledge Engine) — Flashcards, Cloze, Concept Maps via LLM."""
 from typing import Any
-from services.claude_client import ask_claude_json
+from services.llm_client import ask_llm_json as ask_claude_json
 
 
 SYSTEM_FLASHCARD = """You are an elite exam strategist AI for competitive exams like UPSC, NEET, and JEE.
